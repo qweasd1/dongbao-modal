@@ -199,13 +199,13 @@ class DefaultWindow extends React.Component {
 }
 
 windowMapper["default"] = DefaultWindow
-export let addWindow = (name, component) => {
+let addWindow = (name, component) => {
   windowMapper[name] = component
 }
 
 // register modal style creators, used to change style of modal's
 let modalStyleMapper = {}
-export let addModalStyle = (name,{
+let addModalStyle = (name,{
   activeOverlay = defaultActiveOverlayStyleCreator,
   inactiveOverlay = defaultInactiveOverlayStyleCreator,
   activeWindow = defaultActiveWindowStyleCreator,
@@ -228,7 +228,7 @@ modalStyleMapper["default"] = {
 
 
 // state
-export let modalStateConfig = {
+let modalStateConfig = {
   path:"modal",
   initial: initialState,
   actions: {
@@ -274,6 +274,98 @@ export let modalStateConfig = {
     }
   }
 }
+
+
+// export
+
+const DEFAULT_PATH = path
+
+export function createModal(path = DEFAULT_PATH){
+  
+  // modal component
+  let ModalContainer = connect({
+    path: path,
+  })(
+    class Container extends React.Component {
+      
+      constructor() {
+        super()
+        this.isFrist = true
+      }
+      
+      componentDidMount() {
+        this.isFrist = false
+      }
+      
+      render() {
+        
+        let {component:ContentComponent, options = {}, closeFn} = this.props.state
+        
+        
+        //calc modal style
+        let overlayActiveStyle, overlayInactiveStyle, windowActiveStyle, windowInactiveStyle
+        let modalStyleCreator = modalStyleMapper[options.style || "default"]
+        
+        // create styles for overlay and window state
+        if (ContentComponent) {
+          overlayActiveStyle = modalStyleCreator.activeOverlay(options)
+          windowActiveStyle = modalStyleCreator.activeWindow(options)
+        }
+        else {
+          overlayInactiveStyle = modalStyleCreator.inactiveOverlay(options)
+          windowInactiveStyle = modalStyleCreator.inactiveWindow(options)
+        }
+        
+        
+        // get style for active overlay
+        let overlayStyle
+        if (ContentComponent) {
+          overlayStyle = overlayActiveStyle
+        }
+        else {
+          if (this.isFrist) {
+            overlayStyle = overlayInitialStyle
+          }
+          else {
+            
+            overlayStyle = overlayInactiveStyle
+          }
+        }
+        
+        // choose window wrapper
+        let WindowWrapper
+        if (options.window === undefined) {
+          WindowWrapper = windowMapper["default"]
+        }
+        else {
+          WindowWrapper = windowMapper[options.window]
+          if (!WindowWrapper) {
+            throw new Error(`can't find '${options.window}' in registered windows`)
+          }
+        }
+        
+        
+        return (<div>
+          <div style={overlayStyle} onClick={closeFn}></div>
+          <div style={ContentComponent ? windowActiveStyle : windowInactiveStyle}>
+            <WindowWrapper close={closeFn}>
+              {ContentComponent ? <ContentComponent close={closeFn}></ContentComponent> : null}
+            </WindowWrapper>
+          </div>
+        </div>)
+        
+      }
+    }
+  )
+  
+  return {
+    modalState:State(modalStateConfig[path]),
+    addModalStyle,
+    addWindow,
+    ModalContainer
+  }
+}
+
 
 
 // let overlayInitialStyle = {
@@ -337,78 +429,3 @@ export let modalStateConfig = {
 // }
 
 
-// modal component
-export let ModalContainer = connect({
-  path: __dirname,
-})(
-  class Container extends React.Component {
-    
-    constructor() {
-      super()
-      this.isFrist = true
-    }
-    
-    componentDidMount() {
-      this.isFrist = false
-    }
-    
-    render() {
-      
-      let {component:ContentComponent, options = {}, closeFn} = this.props.state
-      
-      
-      //calc modal style
-      let overlayActiveStyle, overlayInactiveStyle, windowActiveStyle, windowInactiveStyle
-      let modalStyleCreator = modalStyleMapper[options.style || "default"]
-      
-      // create styles for overlay and window state
-      if (ContentComponent) {
-        overlayActiveStyle = modalStyleCreator.activeOverlay(options)
-        windowActiveStyle = modalStyleCreator.activeWindow(options)
-      }
-      else {
-        overlayInactiveStyle = modalStyleCreator.inactiveOverlay(options)
-        windowInactiveStyle = modalStyleCreator.inactiveWindow(options)
-      }
-      
-      
-      // get style for active overlay
-      let overlayStyle
-      if (ContentComponent) {
-        overlayStyle = overlayActiveStyle
-      }
-      else {
-        if (this.isFrist) {
-          overlayStyle = overlayInitialStyle
-        }
-        else {
-          
-          overlayStyle = overlayInactiveStyle
-        }
-      }
-      
-      // choose window wrapper
-      let WindowWrapper
-      if (options.window === undefined) {
-        WindowWrapper = windowMapper["default"]
-      }
-      else {
-        WindowWrapper = windowMapper[options.window]
-        if (!WindowWrapper) {
-          throw new Error(`can't find '${options.window}' in registered windows`)
-        }
-      }
-      
-      
-      return (<div>
-        <div style={overlayStyle} onClick={closeFn}></div>
-        <div style={ContentComponent ? windowActiveStyle : windowInactiveStyle}>
-          <WindowWrapper close={closeFn}>
-            {ContentComponent ? <ContentComponent close={closeFn}></ContentComponent> : null}
-          </WindowWrapper>
-        </div>
-      </div>)
-      
-    }
-  }
-)
