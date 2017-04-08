@@ -1,0 +1,24 @@
+{
+  "name": "dongbao-modal",
+  "version": "1.0.0",
+  "description": "dongbao's modal framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "build": "rm -rf lib && NODE_ENV=production babel src -d lib --no-comments"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "peerDependencies": {
+    "dongbao": "^0.1.13",
+    "react": "^15.5.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.0",
+    "babel-jest": "^19.0.0",
+    "babel-preset-react-app": "^2.2.0",
+    "babel-register": "^6.24.0",
+    "jest": "^19.0.2"
+  }
+}
