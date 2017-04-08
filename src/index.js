@@ -227,53 +227,6 @@ modalStyleMapper["default"] = {
 }
 
 
-// state
-let modalStateConfig = {
-  path:"modal",
-  initial: initialState,
-  actions: {
-    /**
-     *
-     * @param state
-     * @param payload {component and options}
-     * @return {*}
-     */
-    showModal(state, payload){
-      
-      let {options = {}} = payload
-      let closeFn = () => {
-        let {willClose = defaultWillClose, didClose = defaultDidClose} = options
-        return Promise.resolve(willClose()).then((canClose) => {
-          if (canClose) {
-            return Promise.resolve(didClose()).then(() => {
-              modalState.updateModalClosed(options)
-            })
-          }
-        }).catch(() => {
-        })
-      }
-      
-      let nextState = {
-        ...payload,
-        closeFn
-      }
-      
-      return nextState
-    },
-    // we need payload here because we need to control the animation of close modal
-    updateModalClosed(state, payload){
-      return {
-        options: payload,
-        component: undefined,
-      }
-    }
-  },
-  effects: {
-    closeModal(payload, getState){
-      return getState().closeFn()
-    }
-  }
-}
 
 
 // export
@@ -281,10 +234,57 @@ let modalStateConfig = {
 const DEFAULT_PATH = "modal"
 
 export function createModal(path = DEFAULT_PATH){
+  let modalState
+    // state
+  let modalStateConfig = {
+    path:path,
+    initial: initialState,
+    actions: {
+      /**
+       *
+       * @param state
+       * @param payload {component and options}
+       * @return {*}
+       */
+      showModal(state, payload){
+        
+        let {options = {}} = payload
+        let closeFn = () => {
+          let {willClose = defaultWillClose, didClose = defaultDidClose} = options
+          return Promise.resolve(willClose()).then((canClose) => {
+            if (canClose) {
+              return Promise.resolve(didClose()).then(() => {
+                modalState.updateModalClosed(options)
+              })
+            }
+          }).catch(() => {
+          })
+        }
+        
+        let nextState = {
+          ...payload,
+          closeFn
+        }
+        
+        return nextState
+      },
+      // we need payload here because we need to control the animation of close modal
+      updateModalClosed(state, payload){
+        return {
+          options: payload,
+          component: undefined,
+        }
+      }
+    },
+    effects: {
+      closeModal(payload, getState){
+        return getState().closeFn()
+      }
+    }
+  }
   
-  modalStateConfig[path] = path
   
-  let modalState = State(modalStateConfig)
+  modalState = State(modalStateConfig)
   
   
   // modal component
