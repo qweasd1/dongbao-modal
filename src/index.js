@@ -282,6 +282,11 @@ const DEFAULT_PATH = "modal"
 
 export function createModal(path = DEFAULT_PATH){
   
+  modalStateConfig[path] = path
+  
+  let modalState = State(modalStateConfig)
+  
+  
   // modal component
   let ModalContainer = connect({
     path: path,
@@ -359,7 +364,7 @@ export function createModal(path = DEFAULT_PATH){
   )
   
   return {
-    modalState:State(modalStateConfig[path]),
+    modalState,
     addModalStyle,
     addWindow,
     ModalContainer
