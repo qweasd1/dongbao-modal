@@ -2,7 +2,7 @@
   "name": "dongbao-modal",
   "version": "0.1.0",
   "description": "dongbao's modal framework",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "jest",
     "build": "rm -rf lib && NODE_ENV=production babel src -d lib --no-comments"
