@@ -1,6 +1,6 @@
 {
   "name": "dongbao-modal",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "dongbao's modal framework",
   "main": "lib/index.js",
   "scripts": {
