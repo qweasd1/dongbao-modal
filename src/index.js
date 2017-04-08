@@ -2,7 +2,7 @@
  * Created by tony on 4/7/17.
  */
 import React from 'react'
-import {connect, State} from 'dongbao'
+import {connect} from 'dongbao'
 
 // const
 let EASE_FUNCTION_ELASTIC = "cubic-bezier(.03,1.6,.46,1.6)"
@@ -228,8 +228,8 @@ modalStyleMapper["default"] = {
 
 
 // state
-export let modalState = State({
-  path: __dirname,
+export let modalStateConfig = {
+  path:"modal",
   initial: initialState,
   actions: {
     /**
@@ -273,7 +273,7 @@ export let modalState = State({
       return getState().closeFn()
     }
   }
-})
+}
 
 
 // let overlayInitialStyle = {
