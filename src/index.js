@@ -2,7 +2,7 @@
  * Created by tony on 4/7/17.
  */
 import React from 'react'
-import {connect} from 'dongbao'
+import {State, connect} from 'dongbao'
 
 // const
 let EASE_FUNCTION_ELASTIC = "cubic-bezier(.03,1.6,.46,1.6)"
