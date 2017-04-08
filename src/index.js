@@ -278,7 +278,7 @@ let modalStateConfig = {
 
 // export
 
-const DEFAULT_PATH = path
+const DEFAULT_PATH = "modal"
 
 export function createModal(path = DEFAULT_PATH){
   
